@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:task="http://www.springframework.org/schema/task" 
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:mvc="http://www.springframework.org/schema/mvc"
+	   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:p="http://www.springframework.org/schema/p"
+    xmlns:aop="http://www.springframework.org/schema/aop"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans 
+	http://www.springframework.org/schema/beans/spring-beans.xsd 
+	http://www.springframework.org/schema/mvc
+	http://www.springframework.org/schema/mvc/spring-mvc.xsd
+	http://www.springframework.org/schema/context 
+	http://www.springframework.org/schema/context/spring-context.xsd
+	http://www.springframework.org/schema/task
+	http://www.springframework.org/schema/task/spring-task-4.3.xsd
+	http://www.springframework.org/schema/aop
+	http://www.springframework.org/schema/aop/spring-aop-4.2.xsd">
+
+	<description>springMVC 配置</description>
+
+	<!-- 加载配置属性文件 -->
+	<context:property-placeholder ignore-unresolvable="true" location="classpath:const.properties" />
+	
+	<!-- 默认的注解映射的支持 -->
+	<mvc:annotation-driven />
+
+	<!--通知spring使用cglib而不是jdk的来生成代理方法 AOP可以拦截到Controller-->
+	<aop:aspectj-autoproxy expose-proxy="true"/>
+	
+	<bean class="org.springframework.beans.factory.annotation.AutowiredAnnotationBeanPostProcessor"/>  
+	<!-- 完成请求和注解POJO的映射 -->
+	<bean class="org.springframework.web.servlet.mvc.annotation.AnnotationMethodHandlerAdapter" />
+
+
+	<!-- 使用Annotation自动注册Bean,只扫描@Controller 
+		use-default-filters="false" 是关键, 避免实例化所有@Component的类-->
+	<context:component-scan base-package="com.lsfly.controller,com.lsfly.websocket" use-default-filters="false">
+		<context:include-filter type="annotation" expression="org.springframework.stereotype.Controller" />
+		<!-- 强制排除service -->
+		<context:exclude-filter type="annotation" expression="org.springframework.stereotype.Service"/>
+	</context:component-scan> 
+	
+
+	<!-- 定义视图文件解析 -->
+	<bean
+		class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+		<property name="prefix" value="${web.view.prefix}" />
+		<property name="suffix" value="${web.view.suffix}" />
+		<property name="contentType" value="text/html;charset=UTF-8"/>
+	</bean>
+
+	<!-- 定义文件解释器 -->
+	<bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
+		<!-- 设置默认编码 -->
+		<property name="defaultEncoding" value="utf-8"></property>
+		<!-- 上传图片最大大小5M-->
+		<property name="maxUploadSize" value="5073741824"></property>
+	</bean>
+	
+
+<!--	 默认首页
+ 	<mvc:view-controller path="/" view-name="redirect:/login.html" />
+ 	
+			
+	&lt;!&ndash; 静态资源映射 &ndash;&gt;
+	<mvc:resources mapping="/static/**" location="/static/" cache-period="31536000" />
+	
+	<mvc:resources location="/" mapping="/**/*.html"/>  
+	<mvc:resources location="/" mapping="/**/*.js"/>  
+	<mvc:resources location="/" mapping="/**/*.css"/>  
+	<mvc:resources location="/" mapping="/**/*.png"/>  
+	<mvc:resources location="/" mapping="/**/*.gif"/>  -->
+
+	<!-- 对静态资源文件的访问， 将无法mapping到Controller的path交给default servlet handler处理 -->
+	<mvc:default-servlet-handler />
+	<!--web的欢迎界面没有页面路径时触发-->
+	<mvc:view-controller path="/" view-name="redirect:/mainPage.do"/>
+		  
+	<!-- 开启Shiro的注解(如@RequiresRoles,@RequiresPermissions),
+	需借助SpringAOP扫描使用Shiro注解的类,并在必要时进行安全逻辑验证 -->
+	<bean class="org.springframework.aop.framework.autoproxy.DefaultAdvisorAutoProxyCreator" depends-on="lifecycleBeanPostProcessor"/>
+	
+	
+	<!-- 解决手机中文乱码 -->
+	<mvc:annotation-driven>
+        <mvc:message-converters>
+            <bean class="org.springframework.http.converter.StringHttpMessageConverter">
+                <property name="supportedMediaTypes">
+                    <list>
+                        <value>application/json;charset=UTF-8</value>
+                    </list>
+                </property>
+            </bean>
+        </mvc:message-converters>
+    </mvc:annotation-driven>
+	<!--拦截器-->
+	<mvc:interceptors>
+        <mvc:interceptor>  
+            <!-- 需拦截的地址 -->
+            <!-- 一级目录 -->
+            <mvc:mapping path="/*.do" />
+            <!--<mvc:mapping path="/*.html" />  -->
+  
+            <!-- 二级目录 -->
+            <mvc:mapping path="/*/*.do" />
+            <!--<mvc:mapping path="/*/*.html" />-->
+            <!-- 需排除拦截的地址 -->
+             <!--<mvc:exclude-mapping path="/sysuser/toLogin.do"/>-->
+             <!--<mvc:exclude-mapping path="/sysuser/login.do"/>-->
+             <!--<mvc:exclude-mapping path="/sysuser/getVerify.do"/>-->
+
+            <bean class="com.lsfly.util.Interceptors" />
+        </mvc:interceptor>  
+    </mvc:interceptors>
+    
+    <!-- 定时任务 -->
+	<task:executor id="executor" pool-size="5" />  
+	<task:scheduler id="scheduler" pool-size="10" />  <!-- 连接池 -->
+	<task:annotation-driven executor="executor" scheduler="scheduler" />
+	<!-- 配置文件实现 如果使用配置文件实现 把注释解开即可然后 删除掉代码的注解，时间有cron、fixed-rate、fixed-delay等设置-->
+	<!-- cron配置请参考http://cron.qqe2.com/-->
+	  <!--<task:scheduled-tasks scheduler="scheduler">-->
+		  <!--&lt;!&ndash;<task:scheduled ref="TAdTaskSchedule" method="tAdTaskplaying" cron="0/60 * * * * ?"/>&ndash;&gt;-->
+	<!--&lt;!&ndash;<task:scheduled ref="TDeviceStatusSchedule" method="tDeviceStatus" cron="0/10 * * * * ?"/>&ndash;&gt;-->
+		  <!--&lt;!&ndash;<task:scheduled ref="TAdUrgentTaskSchedule" method="tadUrgentTaskPlay" cron="0/10 * * * * ?"/>&ndash;&gt;-->
+		  <!--&lt;!&ndash;<task:scheduled ref="TequipmentTaskSchedule" method="tequipmentTaskOn" cron="0/30 * * * * ?"/>&ndash;&gt;-->
+		  <!--&lt;!&ndash;<task:scheduled ref="TNamingSchedule" method="TNamingSche" fixed-rate="20000"/>&lt;!&ndash;每隔5秒执行一次&ndash;&gt;&ndash;&gt;-->
+		  <!--&lt;!&ndash;<task:scheduled ref="TDutySchedule" method="TDutySche" cron="0 59 23 * * ?"/>&lt;!&ndash;每天的23:59执行一次&ndash;&gt;&ndash;&gt;-->
+	  <!--</task:scheduled-tasks>-->
+
+	<!-- 实体返回转化器,Enables the Spring MVC @Controller programming model -->
+	<mvc:annotation-driven>
+		<mvc:message-converters register-defaults="true">
+			<!-- 配置扩展的Fastjson支持 -->
+			<bean class="com.lsfly.commons.MessageConverter">
+				<property name="supportedMediaTypes">
+					<list>
+						<value>text/html;charset=UTF-8</value>
+						<value>application/json</value>
+					</list>
+				</property>
+				<property name="features">
+					<list>
+						<value>WriteMapNullValue</value>
+						<value>QuoteFieldNames</value>
+						<value>WriteNullStringAsEmpty</value>
+						<value>DisableCircularReferenceDetect</value>
+					</list>
+				</property>
+			</bean>
+		</mvc:message-converters>
+	</mvc:annotation-driven>
+</beans>

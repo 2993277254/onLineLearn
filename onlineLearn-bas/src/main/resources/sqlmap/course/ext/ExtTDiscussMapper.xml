@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lsfly.bas.dao.course.ext.ExtTDiscussMapper">
+
+  <sql id="tDiscussColumns">
+    td_.uid_
+    ,td_.content_
+    ,td_.user_id_
+    ,td_.course_id_
+    ,td_.timestamp_
+    ,td_.version_
+    ,td_.create_by_
+    ,td_.create_time_
+    ,td_.update_by_
+    ,td_.update_time_
+    ,td_.is_delete_
+  </sql>
+  <select id="list" resultType="com.lsfly.bas.model.course.ext.TDiscussList">
+    SELECT
+
+    <include refid="tDiscussColumns"/>
+    ,su_.user_name_ as userName
+    ,su_.picture_url_ as photoUrl
+    FROM t_discuss_ td_
+    left join sys_user su_ on td_.user_id_=su_.uid_
+
+    WHERE td_.is_delete_!='1'
+    <if test="content!= null and content!=''">
+    AND td_.content_ = #{content}
+    </if>
+    <if test="userId!= null and userId!=''">
+    AND td_.user_id_ = #{userId}
+    </if>
+    <if test="courseId!= null and courseId!=''">
+    AND td_.course_id_ = #{courseId}
+    </if>
+    <if test="timestamp!= null and timestamp!=''">
+    AND td_.timestamp_ = #{timestamp}
+    </if>
+    <choose>
+      <when test="page!=null and page.orderBy!= null and page.orderBy!= ''">
+        ORDER BY ${page.orderBy}
+      </when>
+      <otherwise>
+        ORDER BY td_.create_time_ DESC
+      </otherwise>
+    </choose>
+  </select>
+</mapper>

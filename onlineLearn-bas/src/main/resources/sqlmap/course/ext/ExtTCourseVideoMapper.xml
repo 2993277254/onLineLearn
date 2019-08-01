@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lsfly.bas.dao.course.ext.ExtTCourseVideoMapper">
+
+  <sql id="tCourseVideoColumns">
+    tcv_.uid_
+    ,tcv_.course_id_
+    ,tcv_.video_id_
+    ,tcv_.timestamp_
+    ,tcv_.version_
+    ,tcv_.create_by_
+    ,tcv_.create_time_
+    ,tcv_.update_by_
+    ,tcv_.update_time_
+    ,tcv_.is_delete_
+    ,tcv_.is_introduction_
+  </sql>
+  <select id="list" resultType="com.lsfly.bas.model.course.ext.TCourseVideoList">
+    SELECT
+    <include refid="tCourseVideoColumns"/>
+    FROM t_course_video_ tcv_
+    WHERE tcv_.is_delete_!='1'
+    <if test="courseId!= null and courseId!=''">
+    AND tcv_.course_id_ = #{courseId}
+    </if>
+    <if test="videoId!= null and videoId!=''">
+    AND tcv_.video_id_ = #{videoId}
+    </if>
+    <if test="timestamp!= null and timestamp!=''">
+    AND tcv_.timestamp_ = #{timestamp}
+    </if>
+    <if test="isIntroduction!= null and isIntroduction!=''">
+    AND tcv_.is_introduction_ = #{isIntroduction}
+    </if>
+    <choose>
+      <when test="page!=null and page.orderBy!= null and page.orderBy!= ''">
+        ORDER BY ${page.orderBy}
+      </when>
+      <otherwise>
+        ORDER BY tcv_.update_time_ DESC
+      </otherwise>
+    </choose>
+  </select>
+  <insert id="insertList" parameterType="java.util.List">
+    INSERT INTO t_course_video_(
+    uid_
+    ,course_id_
+    ,video_id_
+    ,timestamp_
+    ,create_by_
+    ,create_time_
+    ,is_delete_
+    )
+    values
+    <foreach collection="list" item="item" index="index" separator=",">
+      (
+      #{item.uid}
+      ,#{item.courseId}
+      ,#{item.videoId}
+      ,#{item.timestamp}
+      ,#{item.createBy}
+      ,#{item.createTime}
+      ,#{item.isDelete}
+      )
+    </foreach>
+  </insert>
+</mapper>

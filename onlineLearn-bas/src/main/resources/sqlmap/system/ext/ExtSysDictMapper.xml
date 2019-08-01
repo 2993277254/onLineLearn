@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lsfly.bas.dao.system.ext.ExtSysDictMapper">
+  <!-- 一对一例子-->
+  <sql id="sysDictColumns">
+        sd.id,
+        sd.dict_name,
+        sd.dict_type,
+        sd.dict_system,
+        sd.dict_desc,
+        sd.is_delete_,
+        sd.version_,
+        sd.create_by_,
+        sd.create_time_,
+        sd.update_by_,
+        sd.update_time_
+  </sql>
+  <select id="list" resultType="com.lsfly.bas.model.system.ext.SysDictList">
+    SELECT
+    <include refid="sysDictColumns"/>
+    FROM sys_dict sd
+    WHERE sd.is_delete_!='1'
+    <if test="dictName!= null and dictName!=''">
+      AND sd.dict_name LIKE '%${dictName}%'
+    </if>
+    <if test="dictType!= null and dictType!=''">
+      AND sd.dict_type LIKE '%${dictType}%'
+    </if>
+    <choose>
+      <when test="page!=null and page.orderBy!= null and page.orderBy!= ''">
+        ORDER BY ${page.orderBy}
+      </when>
+      <otherwise>
+        ORDER BY sd.dict_type ASC
+      </otherwise>
+    </choose>
+  </select>
+
+  <!-- 一对多例子-->
+  <resultMap id="OneToManyMap" type="com.lsfly.bas.model.system.ext.SysDictList"
+             extends="com.lsfly.bas.dao.system.SysDictMapper.BaseResultMap">
+    <!-- SysDictData明细表-->
+    <collection property="sysDictDataList" ofType="com.lsfly.bas.model.system.SysDictData"
+                columnPrefix="sysDictData." resultMap="com.lsfly.bas.dao.system.SysDictDataMapper.BaseResultMap">
+    </collection>
+  </resultMap>
+  <select id="listAndDetil" resultMap="OneToManyMap">
+        SELECT
+           sd.id,
+           sd.dict_name,
+           sd.dict_type,
+           sd.dict_system,
+           sd.dict_desc,
+           sdd.id as 'sysDictData.id',
+           sdd.dict_id as 'sysDictData.dict_id',
+           sdd.dict_data_name as 'sysDictData.dict_data_name',
+           sdd.dict_data_value as 'sysDictData.dict_data_value'
+        FROM sys_dict sd
+        LEFT JOIN sys_dict_data sdd ON sdd.dict_id=sd.id AND sdd.is_delete_!='1'
+        WHERE sd.is_delete_!='1'
+        ORDER BY sd.dict_type,sdd.dict_data_sort ASC
+    </select>
+</mapper>

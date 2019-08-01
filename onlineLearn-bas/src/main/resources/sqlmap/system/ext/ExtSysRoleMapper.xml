@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lsfly.bas.dao.system.ext.ExtSysRoleMapper">
+
+  <sql id="sysRoleColumns">
+    sr_.id
+    ,sr_.role_name
+    ,sr_.remark
+    ,sr_.role_sort
+    ,sr_.identity_
+    ,sr_.status
+    ,sr_.is_delete_
+    ,sr_.version_
+    ,sr_.create_by_
+    ,sr_.create_time_
+    ,sr_.update_by_
+    ,sr_.update_time_
+  </sql>
+  <select id="list" resultType="com.lsfly.bas.model.system.ext.SysRoleList">
+    SELECT
+    <include refid="sysRoleColumns"/>
+    FROM sys_role sr_
+    WHERE sr_.is_delete_!='1'
+    <if test="roleName!= null and roleName!=''">
+      AND sr_.role_name LIKE '%${roleName}%'
+    </if>
+    <if test="identity!=null and identity!=''">
+      and sr_.identity_=#{identity}
+    </if>
+    <if test="status!= null and status!=''">
+      AND sr_.status = #{status}
+    </if>
+    <choose>
+      <when test="page!=null and page.orderBy!= null and page.orderBy!= ''">
+        ORDER BY ${page.orderBy}
+      </when>
+      <otherwise>
+        ORDER BY sr_.create_time_ DESC
+      </otherwise>
+    </choose>
+  </select>
+</mapper>

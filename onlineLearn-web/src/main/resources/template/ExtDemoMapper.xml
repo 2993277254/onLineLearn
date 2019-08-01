@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="${dao_package}.ext.Ext${DomainObjectName}Mapper">
+
+  <sql id="${FileName}Columns">
+    <#assign index = 0>
+    <#list genTableColumnList as col>
+    <#if index != 0>,</#if>${aliasName}.${col.getName()}
+    <#assign index = index + 1>
+    </#list>
+    <#list genTableColumnList as col>
+    <#if (col.getListField()?? && col.getListField()!="")>
+    ,${col.getListField()} AS '${col.getField2()}'
+    </#if>
+    </#list>
+  </sql>
+  <select id="list" resultType="${model_package}.ext.${DomainObjectName}List">
+    SELECT
+    <include refid="${FileName}Columns"/>
+    FROM ${tableName} ${aliasName}
+    <#if (tableList?size>0)>
+    <#list tableList as tables>
+    LEFT JOIN ${tables.getParentTable()} ${tables.getAliasName()} ON ${aliasName}.${tables.getParentTableFk()}=${tables.getAliasName()}.${tables.getPkName()}
+    </#list>
+    </#if>
+    WHERE ${aliasName}.${status}!='${status_delete}'
+    <#list genTableColumnList as col>
+    <#if col.getIsQuery()=="1">
+    <#if col.getJavaType()=="java.util.Date">
+    <#if col.getQueryType()=="date_range"||col.getQueryType()=="datetime_range"||col.getQueryType()=="time_range">
+    <if test="${col.getJavaField()}_begin!= null">
+    AND ${aliasName}.${col.getName()} &gt;= #<#noparse>{</#noparse>${col.getJavaField()}_begin}
+    </if>
+    <if test="${col.getJavaField()}_end!= null">
+    AND ${aliasName}.${col.getName()} &lt;= #<#noparse>{</#noparse>${col.getJavaField()}_end}
+    <#else>
+    <if test="${col.getJavaField()}!= null">
+    </#if>
+    <#else>
+    <if test="${col.getJavaField()}!= null and ${col.getJavaField()}!=''">
+    </#if>
+    <#if col.getQueryType()!="date_range"&&col.getQueryType()!="datetime_range"&&col.getQueryType()!="time_range">
+    <#if col.getQueryCondition()=="=">
+    AND ${aliasName}.${col.getName()} = #<#noparse>{</#noparse>${col.getJavaField()}}
+    <#elseif col.getQueryCondition()=="like">
+    AND ${aliasName}.${col.getName()} LIKE '%<#noparse>${</#noparse>${col.getJavaField()}}%'
+    <#elseif col.getQueryCondition()==">">
+    AND ${aliasName}.${col.getName()} &gt; #<#noparse>{</#noparse>${col.getJavaField()}}
+    <#elseif col.getQueryCondition()==">=">
+    AND ${aliasName}.${col.getName()} &gt;= #<#noparse>{</#noparse>${col.getJavaField()}}
+    <#elseif col.getQueryCondition()=="<">
+    AND ${aliasName}.${col.getName()} &lt; #<#noparse>{</#noparse>${col.getJavaField()}}
+    <#elseif col.getQueryCondition()=="<=">
+    AND ${aliasName}.${col.getName()} &lt;= #<#noparse>{</#noparse>${col.getJavaField()}}
+    <#elseif col.getQueryCondition()=="!=">
+    AND ${aliasName}.${col.getName()} != #<#noparse>{</#noparse>${col.getJavaField()}}
+    </#if>
+    </#if>
+    </if>
+    </#if>
+    </#list>
+    <choose>
+      <when test="page!=null and page.orderBy!= null and page.orderBy!= ''">
+        ORDER BY <#noparse>${page.orderBy}</#noparse>
+      </when>
+      <otherwise>
+      <#if update_time!="">
+        ORDER BY ${aliasName}.${update_time} DESC
+      </#if>
+      </otherwise>
+    </choose>
+  </select>
+</mapper>

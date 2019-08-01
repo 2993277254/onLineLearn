@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lsfly.bas.dao.video.ext.ExtTVideoMapper">
+
+    <sql id="tVideoColumns">
+     tv_.uid_
+    ,tv_.video_path_
+    ,tv_.video_name_
+    ,tv_.video_size_
+    ,tv_.video_time_
+    ,tv_.video_format_
+    ,tv_.timestamp_
+    ,tv_.version_
+    ,tv_.create_by_
+    ,tv_.create_time_
+    ,tv_.update_by_
+    ,tv_.update_time_
+    ,tv_.is_delete_
+    ,tv_.video_cover_
+  </sql>
+    <select id="list" resultType="com.lsfly.bas.model.video.ext.TVideoList">
+        SELECT
+        <include refid="tVideoColumns"/>
+        FROM t_video_ tv_
+        WHERE tv_.is_delete_!='1'
+        <if test="videoPath!= null and videoPath!=''">
+            AND tv_.video_path_ = #{videoPath}
+        </if>
+        <if test="videoName!= null and videoName!=''">
+            AND tv_.video_name_ = #{videoName}
+        </if>
+        <if test="videoSize!= null and videoSize!=''">
+            AND tv_.video_size_ = #{videoSize}
+        </if>
+        <if test="videoTime!= null and videoTime!=''">
+            AND tv_.video_time_ = #{videoTime}
+        </if>
+        <if test="videoFormat!= null and videoFormat!=''">
+            AND tv_.video_format_ = #{videoFormat}
+        </if>
+        <if test="timestamp!= null and timestamp!=''">
+            AND tv_.timestamp_ = #{timestamp}
+        </if>
+        <choose>
+            <when test="page!=null and page.orderBy!= null and page.orderBy!= ''">
+                ORDER BY ${page.orderBy}
+            </when>
+            <otherwise>
+                ORDER BY tv_.update_time_ DESC
+            </otherwise>
+        </choose>
+    </select>
+    <insert id="insertList" parameterType="java.util.List">
+        INSERT INTO t_video_(
+        uid_
+        ,video_path_
+        ,video_name_
+        ,video_size_
+        ,video_time_
+        ,video_format_
+        ,timestamp_
+        ,create_by_
+        ,create_time_
+        ,update_by_
+        ,update_time_
+        ,is_delete_
+        ,version_
+        ,video_cover_
+        )
+        values
+        <foreach collection="list" item="item" index="index" separator=",">
+            ( #{item.uid}
+            ,#{item.videoPath}
+            ,#{item.videoName}
+            ,#{item.videoSize}
+            ,#{item.videoTime}
+            ,#{item.videoFormat}
+            ,#{item.timestamp}
+            ,#{item.createBy}
+            ,#{item.createTime}
+            ,#{item.updateBy}
+            ,#{item.updateTime}
+            ,#{item.isDelete}
+            ,#{item.version}
+            ,#{item.videoCover}
+            )
+        </foreach>
+    </insert>
+</mapper>

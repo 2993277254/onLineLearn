@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lsfly.bas.dao.system.ext.ExtSysMenuMapper">
+
+  <select id="selectMenuByRoId" resultType="com.lsfly.bas.model.system.ext.SysMenuModify">
+    SELECT
+    sm.id, sm.parent_id, sm.menu_name, sm.menu_sort, sm.menu_url, sm.menu_icon, sm.menu_img, sm.remark, sm.is_delete_,
+    sm.version_
+    FROM sys_menu sm
+    where sm.is_delete_!='1' and sm.status='1'
+    <if test="roId != null and roId!=''">
+      and sm.id in(select menu_id from sys_role_key where is_delete_!='1' and role_id=#{roId})
+    </if>
+    ORDER BY menu_sort ASC
+  </select>
+</mapper>

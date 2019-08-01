@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lsfly.bas.dao.courseUser.ext.ExtTCourseUserMapper">
+
+  <sql id="tCourseUserColumns">
+    tcu_.uid_
+    ,tcu_.user_id_
+    ,tcu_.course_id_
+    ,tcu_.timestamp_
+    ,tcu_.version_
+    ,tcu_.create_by_
+    ,tcu_.create_time_
+    ,tcu_.update_by_
+    ,tcu_.update_time_
+    ,tcu_.is_delete_
+  </sql>
+  <select id="list" resultType="com.lsfly.bas.model.courseUser.ext.TCourseUserList">
+    SELECT
+    <include refid="tCourseUserColumns"/>
+    FROM t_course_user_ tcu_
+    WHERE tcu_.is_delete_!='1'
+    <if test="userId!= null and userId!=''">
+    AND tcu_.user_id_ = #{userId}
+    </if>
+    <if test="courseId!= null and courseId!=''">
+    AND tcu_.course_id_ = #{courseId}
+    </if>
+    <if test="timestamp!= null and timestamp!=''">
+    AND tcu_.timestamp_ = #{timestamp}
+    </if>
+    <choose>
+      <when test="page!=null and page.orderBy!= null and page.orderBy!= ''">
+        ORDER BY ${page.orderBy}
+      </when>
+      <otherwise>
+        ORDER BY tcu_.update_time_ DESC
+      </otherwise>
+    </choose>
+  </select>
+
+  <select id="list2" resultType="com.lsfly.bas.model.courseUser.ext.TCourseUserList">
+    SELECT
+    <include refid="tCourseUserColumns"/>
+    ,tc_.type_ as 'tCourse.type'
+    ,tc_.photo_url_ as 'tCourse.photoUrl'
+    ,tc_.name_ as 'tCourse.name'
+    ,tc_.outline_ as 'tCourse.outline'
+    ,tc_.status_ as 'tCourse.status'
+    FROM t_course_user_ tcu_
+    left join t_course_ tc_ on tc_.uid_=tcu_.course_id_
+    WHERE tcu_.is_delete_!='1'
+    and tc_.is_delete_!='1'
+    <if test="userId!= null and userId!=''">
+    AND tcu_.user_id_ = #{userId}
+    </if>
+    <if test="courseId!= null and courseId!=''">
+    AND tcu_.course_id_ = #{courseId}
+    </if>
+    <if test="timestamp!= null and timestamp!=''">
+    AND tcu_.timestamp_ = #{timestamp}
+    </if>
+    <choose>
+      <when test="page!=null and page.orderBy!= null and page.orderBy!= ''">
+        ORDER BY ${page.orderBy}
+      </when>
+      <otherwise>
+        ORDER BY tcu_.update_time_ DESC
+      </otherwise>
+    </choose>
+  </select>
+</mapper>

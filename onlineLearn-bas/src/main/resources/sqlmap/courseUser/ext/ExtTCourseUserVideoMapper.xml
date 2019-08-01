@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lsfly.bas.dao.courseUser.ext.ExtTCourseUserVideoMapper">
+
+  <sql id="tCourseUserVideoColumns">
+    tcuv_.uid_
+    ,tcuv_.course_id_
+    ,tcuv_.user_id_
+    ,tcuv_.current_time_
+    ,tcuv_.video_id_
+    ,tcuv_.is_end_
+    ,tcuv_.timestamp_
+    ,tcuv_.version_
+    ,tcuv_.create_by_
+    ,tcuv_.create_time_
+    ,tcuv_.update_by_
+    ,tcuv_.update_time_
+    ,tcuv_.is_delete_
+  </sql>
+  <select id="list" resultType="com.lsfly.bas.model.courseUser.ext.TCourseUserVideoList">
+    SELECT
+    <include refid="tCourseUserVideoColumns"/>
+    FROM t_course_user_video_ tcuv_
+    WHERE tcuv_.is_delete_!='1'
+    <if test="courseId!= null and courseId!=''">
+    AND tcuv_.course_id_ = #{courseId}
+    </if>
+    <if test="userId!= null and userId!=''">
+    AND tcuv_.user_id_ = #{userId}
+    </if>
+    <if test="currentTime!= null and currentTime!=''">
+    AND tcuv_.current_time_ = #{currentTime}
+    </if>
+    <if test="videoId!= null and videoId!=''">
+    AND tcuv_.video_id_ = #{videoId}
+    </if>
+    <if test="isEnd!= null and isEnd!=''">
+    AND tcuv_.is_end_ = #{isEnd}
+    </if>
+    <if test="timestamp!= null and timestamp!=''">
+    AND tcuv_.timestamp_ = #{timestamp}
+    </if>
+    <choose>
+      <when test="page!=null and page.orderBy!= null and page.orderBy!= ''">
+        ORDER BY ${page.orderBy}
+      </when>
+      <otherwise>
+        ORDER BY tcuv_.update_time_ DESC
+      </otherwise>
+    </choose>
+  </select>
+</mapper>

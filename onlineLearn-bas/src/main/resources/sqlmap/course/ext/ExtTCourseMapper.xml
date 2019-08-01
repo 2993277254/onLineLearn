@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lsfly.bas.dao.course.ext.ExtTCourseMapper">
+
+  <sql id="tCourseColumns">
+      tc_.uid_
+    ,tc_.type_
+    ,tc_.photo_url_
+    ,tc_.name_
+    ,tc_.introduction_
+    ,tc_.person_num_
+    ,tc_.summary_
+    ,tc_.target_
+    ,tc_.outline_
+    ,tc_.demand_
+    ,tc_.class_test_
+    ,tc_.examination_
+    ,tc_.teacher_id_
+    ,tc_.status_
+    ,tc_.reason_
+    ,tc_.order_by_
+    ,tc_.timestamp_
+    ,tc_.version_
+    ,tc_.verify_time_
+    ,tc_.commit_time_
+    ,tc_.create_by_
+    ,tc_.create_time_
+    ,tc_.update_by_
+    ,tc_.update_time_
+    ,tc_.is_delete_
+
+  </sql>
+  <select id="list" resultType="com.lsfly.bas.model.course.ext.TCourseList">
+    SELECT
+    <include refid="tCourseColumns"/>
+    FROM t_course_ tc_
+    WHERE tc_.is_delete_!='1'
+    <if test="uid!= null and uid!=''">
+      AND tc_.uid_ = #{uid}
+    </if>
+    <if test="teacherId!= null and teacherId!=''">
+      AND tc_.teacher_id_ = #{teacherId}
+    </if>
+    <if test="type!= null and type!=''">
+    AND tc_.type_ = #{type}
+    </if>
+    <if test="name!= null and name!=''">
+    AND tc_.name_  like '%${name}%'
+    </if>
+    <if test="introduction!= null and introduction!=''">
+    AND tc_.introduction_ = #{introduction}
+    </if>
+    <if test="personNum!= null and personNum!=''">
+      AND tc_.person_num_ = #{personNum}
+    </if>
+    <if test="summary!= null and summary!=''">
+    AND tc_.summary = #{summary}
+    </if>
+    <if test="target!= null and target!=''">
+    AND tc_.target = #{target}
+    </if>
+    <if test="outline!= null and outline!=''">
+    AND tc_.outline = #{outline}
+    </if>
+    <if test="demand!= null and demand!=''">
+    AND tc_.demand = #{demand}
+    </if>
+    <if test="status!= null and status!=''">
+    AND tc_.status_ = #{status}
+    </if>
+    <if test="orderBy!= null and orderBy!=''">
+      AND tc_.order_by_ = #{orderBy}
+    </if>
+    <if test="timestamp!= null and timestamp!=''">
+    AND tc_.timestamp_ = #{timestamp}
+    </if>
+    <choose>
+      <when test="page!=null and page.orderBy!= null and page.orderBy!= ''">
+        <if test="page.orderBy==1">
+          ORDER BY  tc_.person_num_,tc_.update_time_ DESC
+        </if>
+        <if test="page.orderBy==2">
+          ORDER BY  tc_.person_num_ desc
+        </if>
+      </when>
+      <otherwise>
+        ORDER BY tc_.update_time_ DESC
+      </otherwise>
+    </choose>
+  </select>
+</mapper>

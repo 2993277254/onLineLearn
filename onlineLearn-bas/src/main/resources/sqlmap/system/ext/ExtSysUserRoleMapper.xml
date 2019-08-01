@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lsfly.bas.dao.system.ext.ExtSysUserRoleMapper">
+
+  <sql id="sysUserRoleColumns">
+    sur_.id
+    ,sur_.user_id
+    ,sur_.role_id
+    ,sur_.is_delete_
+    ,sur_.version_
+    ,sur_.create_by_
+    ,sur_.create_time_
+    ,sur_.update_by_
+    ,sur_.update_time_
+  </sql>
+  <select id="list" resultType="com.lsfly.bas.model.system.ext.SysUserRoleList">
+    SELECT
+    <include refid="sysUserRoleColumns"/>
+    FROM sys_user_role sur_
+    WHERE sur_.is_delete_!='1'
+    <if test="userId!= null and userId!=''">
+    AND sur_.user_id = #{userId}
+    </if>
+    <if test="roleId!= null and roleId!=''">
+    AND sur_.role_id = #{roleId}
+    </if>
+    <choose>
+      <when test="page!=null and page.orderBy!= null and page.orderBy!= ''">
+        ORDER BY ${page.orderBy}
+      </when>
+      <otherwise>
+        ORDER BY sur_.update_time_ DESC
+      </otherwise>
+    </choose>
+  </select>
+</mapper>

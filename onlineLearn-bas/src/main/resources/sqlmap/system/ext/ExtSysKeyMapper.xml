@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lsfly.bas.dao.system.ext.ExtSysKeyMapper">
+
+  <select id="getAllKeyByRole" resultType="com.lsfly.bas.model.system.SysKey">
+    select
+    sk.key_code
+    from sys_key sk
+    WHERE sk.is_delete_!='1'
+    <if test="roleList != null and roleList.size >0">
+      and sk.id in(select menu_id from sys_role_key where is_delete_!='1'
+      and role_id in
+      <foreach item="item" index="index" collection="roleList"
+               open="(" separator="," close=")">
+        #{item}
+      </foreach>
+      )
+    </if>
+  </select>
+</mapper>

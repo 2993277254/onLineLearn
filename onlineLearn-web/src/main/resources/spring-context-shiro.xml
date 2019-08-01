@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" 
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="
+        http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans-4.0.xsd"
+    default-lazy-init="true">
+
+    <description>Shiro 配置</description>
+
+    <!-- 继承自AuthorizingRealm的自定义Realm,即指定Shiro验证用户登录的类为自定义的ShiroDbRealm.java -->  
+	<bean id="myRealm" class="com.lsfly.shiro.MyRealm"/>
+	  
+	<!-- 安全管理器 -->
+	<bean id="securityManager" class="org.apache.shiro.web.mgt.DefaultWebSecurityManager">  
+	    <property name="realm" ref="myRealm"/>  
+	    <property name="cacheManager" ref="shiroCacheManager" />
+	    <property name="sessionManager" ref="sessionManager" />
+	</bean>
+	  
+	<bean id="shiroFilter" class="org.apache.shiro.spring.web.ShiroFilterFactoryBean">  
+	    <!-- Shiro的核心安全接口,这个属性是必须的 -->  
+	    <property name="securityManager" ref="securityManager"/>  
+	    <!-- 拦截到，跳转到的地址,通过此地址去认证 -->  
+	    <property name="loginUrl" value="/user/login"/>
+	    <!-- 认证成功统一跳转到/admin/index.do，建议不配置，shiro认证成功自动到上一个请求路径 -->
+        <!-- <property name="successUrl" value="/mainPage.do"/> -->
+        <!-- 没有权限跳转的url -->
+	    <property name="unauthorizedUrl" value="/system/unauthorized"/>
+	    <!-- 自定义filter，可用来更改默认的表单名称配置 -->  
+	    <property name="filters">
+			<map>
+			    <!-- 将自定义 的FormAuthenticationFilter注入shiroFilter中 -->  
+				<entry key="authc" value-ref="formAuthenticationFilter"/>
+				<entry key="logout" value-ref="userLogoutFilter" />
+			</map>
+		</property>
+	    <property name="filterChainDefinitions">  
+	        <value>  
+     			 <!--允许匿名访问-->
+				/js/**=anon
+				/css/**=anon
+				/images/**=anon
+				<!--登录-->
+				 /sysUser/clearAndLogin.do=anon
+				<!--登出-->
+     			 /logout.do=logout
+				<!--转主页-->
+				 /mainPage.do=anon
+				<!--验证码-->
+				 /sysUser/getVerify.do=anon
+				<!--注册-->
+				/sysUser/save.do=anon
+				<!--获取字典-->
+				/sysDict/getGsonLists.do=anon
+				<!--课程相关-->
+				/tCourse/list2.do=anon
+				/tCourse/getInfo.do=anon
+				/tDiscuss/list.do=anon
+				/WebSocket=anon
+				/sockjs/**=anon
+				<!--/media/**=anon-->
+				<!--允许匿名访问结束-->
+
+				<!--要求验证后才能动态操作-->
+     			 /*/**.do = authc
+     			 /**.do = authc
+				<!--/admin/**=authc-->
+				<!--/courseUser/**=authc-->
+	        </value>  
+	    </property>
+	</bean>  
+	
+	<!-- 缓存管理器 -->  
+    <bean id="shiroCacheManager" class="org.apache.shiro.cache.ehcache.EhCacheManager">
+		<property name="cacheManagerConfigFile" value="classpath:ehcache-config.xml" />
+	</bean>
+
+	<!-- 会话管理器 -->  
+    <bean id="sessionManager" class="org.apache.shiro.web.session.mgt.DefaultWebSessionManager">  
+        <!-- session的失效时长，单位毫秒 -->  
+        <property name="globalSessionTimeout" value="3600000"/>
+        <!-- 删除失效的session -->  
+        <property name="deleteInvalidSessions" value="true"/>
+        
+        <property name="sessionIdCookie" ref="sessionIdCookie" />
+		<property name="sessionIdCookieEnabled" value="true" />
+
+		<property name="sessionDAO" ref="sessionDAO"/>
+		<property name ="sessionListeners">
+			<list>
+				<ref bean="shiroSessionListener"/>
+			</list>
+		</property>
+    </bean>
+
+
+	<bean id="sessionDAO" class="org.apache.shiro.session.mgt.eis.MemorySessionDAO"/>
+
+   	<!-- 指定本系统SESSIONID, 默认为: JSESSIONID 问题: 与SERVLET容器名冲突, 如JETTY, TOMCAT 等默认JSESSIONID, 
+		当跳出SHIRO SERVLET时如ERROR-PAGE容器会为JSESSIONID重新分配值导致登录会话丢失! -->
+	<bean id="sessionIdCookie" class="org.apache.shiro.web.servlet.SimpleCookie">
+		<constructor-arg name="name" value="SHRIOSESSIONID" />
+	</bean>
+	
+	<!-- 保证实现了Shiro内部lifecycle函数的bean执行 -->  
+	<bean id="lifecycleBeanPostProcessor" class="org.apache.shiro.spring.LifecycleBeanPostProcessor"/>  
+	  
+	<!-- 开启Shiro的注解(如@RequiresRoles,@RequiresPermissions),需借助SpringAOP扫描使用Shiro注解的类,并在必要时进行安全逻辑验证 -->  
+<!--	<bean class="org.apache.shiro.spring.security.interceptor.AuthorizationAttributeSourceAdvisor">
+		<property name="securityManager" ref="securityManager"/>  
+	</bean>-->
+    
+	<!--自定义的验证登陆-->
+	<bean id="formAuthenticationFilter" class="com.lsfly.shiro.LoginAuthenticationFilter">
+		<!--
+		<property name="usernameParam" value="username" />
+		<property name="passwordParam" value="password" />
+		<property name="captchaParam" value="captcha" />
+		
+		<property name="loginUrl" value="/login.do"/>
+		-->
+	</bean>
+	
+	<!--自定义的登出-->
+	<bean id="userLogoutFilter" class="com.lsfly.shiro.UserLogoutFilter">
+		<!--登录跳转到主页-->
+	    <property name="redirectUrl"  value="/mainPage.do"  />
+	</bean>
+
+	<bean id="shiroSessionListener" class="com.lsfly.shiro.MySessionListener">
+	</bean>
+	
+	
+	<!-- 
+    //rememberMeManager管理器，写cookie，取出cookie生成用户信息  
+    <bean id="rememberMeManager" class="org.apache.shiro.web.mgt.CookieRememberMeManager">  
+        <property name="cookie" ref="rememberMeCookie" />  
+    </bean>  
+	//记住我cookie  
+    <bean id="rememberMeCookie" class="org.apache.shiro.web.servlet.SimpleCookie">  
+        //rememberMe是cookie的名字  
+        <constructor-arg value="rememberMe" />  
+		//记住我cookie生效时间30天  
+        <property name="maxAge" value="2592000" />  
+    </bean>   
+    -->
+</beans>

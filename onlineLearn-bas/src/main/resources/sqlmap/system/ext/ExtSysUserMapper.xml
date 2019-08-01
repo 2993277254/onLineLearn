@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lsfly.bas.dao.system.ext.ExtSysUserMapper">
+
+  <sql id="sysUserColumns">
+     su_.uid_
+    ,su_.user_name_
+    ,su_.pass_word_
+    ,su_.nick_name_
+    ,su_.sex_
+    ,su_.picture_url_
+    ,su_.remark_
+    ,su_.identity_
+    ,su_.is_delete_
+    ,su_.online_status_
+    ,su_.update_time_
+    ,su_.create_time_
+    ,su_.later_time_
+  </sql>
+  <select id="list" resultType="com.lsfly.bas.model.system.ext.SysUserList">
+    SELECT
+    <include refid="sysUserColumns"/>
+    FROM sys_user su_
+    WHERE 1=1
+    <if test="isDelete!= null and isDelete!=''">
+      AND su_.is_delete_ =#{isDelete}
+    </if>
+    <if test="userName!= null and userName!=''">
+    AND su_.user_name_=#{userName}
+    </if>
+    <if test="passWord!= null and passWord!=''">
+    AND su_.pass_word_ = #{passWord}
+    </if>
+    <if test="nickName!= null and nickName!=''">
+    AND su_.nick_name_ = '${nickName}'
+    </if>
+    <if test="sex!= null and sex!=''">
+    AND su_.sex_ = #{sex}
+    </if>
+    <if test="pictureUrl!= null and pictureUrl!=''">
+    AND su_.picture_url = #{pictureUrl}
+    </if>
+    <if test="remark!= null and remark!=''">
+    AND su_.remark_ = #{remark}
+    </if>
+    <if test="identity!= null and identity!=''">
+    AND su_.identity_ = #{identity}
+    </if>
+    <if test="onlineStatus!= null and onlineStatus!=''">
+    AND su_.online_status_ = #{onlineStatus}
+    </if>
+    <if test="laterTime!= null">
+    AND su_.later_time = #{laterTime}
+    </if>
+    <if test="type!= null and type!=''">
+      AND su_.identity_ &gt; #{type}
+    </if>
+    <choose>
+      <when test="page!=null and page.orderBy!= null and page.orderBy!= ''">
+        ORDER BY ${page.orderBy}
+      </when>
+      <otherwise>
+        ORDER BY su_.update_time_ DESC
+      </otherwise>
+    </choose>
+  </select>
+</mapper>
