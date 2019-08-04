@@ -1,5 +1,8 @@
 package com.lsfly.websocket;
 
+import com.lsfly.controller.courseUser.TCourseUserController;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.server.ServerHttpRequest;
 import org.springframework.http.server.ServerHttpResponse;
 import org.springframework.web.socket.WebSocketHandler;
@@ -15,7 +18,9 @@ import java.util.Map;
 // 取到相应的值，具体可参考HttpSessionHandshakeInterceptor，
 // 这儿也可以实现HandshakeInterceptor 接口。
 
-public class HandshakeInterceptor extends HttpSessionHandshakeInterceptor {
+public class MyHandshakeInterceptor extends HttpSessionHandshakeInterceptor {
+    public static final Logger logger = LoggerFactory.getLogger(MyHandshakeInterceptor.class);
+
     // 握手前
     @Override
     public boolean beforeHandshake(ServerHttpRequest request,

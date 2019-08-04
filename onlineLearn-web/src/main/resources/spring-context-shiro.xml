@@ -57,8 +57,8 @@
 				/tCourse/list2.do=anon
 				/tCourse/getInfo.do=anon
 				/tDiscuss/list.do=anon
-				/WebSocket=anon
-				/sockjs/**=anon
+				/websocket.action=anon
+				/sockjs/websocket.action=anon
 				<!--/media/**=anon-->
 				<!--允许匿名访问结束-->
 

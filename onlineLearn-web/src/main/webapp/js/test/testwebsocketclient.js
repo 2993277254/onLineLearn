@@ -1,19 +1,23 @@
 layui.use(['index'],function() {
     avalon.ready(function () {
         var websocket;
-
+        var path=getRootPath().replace('http://','');
+        var pullPath="ws://"+path+"websocket.action";
+        debugger;
         // 首先判断是否 支持 WebSocket
         if('WebSocket' in window) {
-            websocket = new WebSocket("ws://localhost:8080/onLineLearn/websocket");
-        } else if('MozWebSocket' in window) {
-            websocket = new MozWebSocket("ws://localhost:8080/onLineLearn/websocket");
-        } else {
-            websocket = new SockJS("ws://localhost:8080/onLineLearn/sockjs/websocket");
-        }
+            websocket = new WebSocket(pullPath);
 
+        } else if('MozWebSocket' in window) {
+            websocket = new MozWebSocket(pullPath);
+        } else {
+            websocket = new SockJS(getRootPath()+"sockjs/websocket.action");
+        }
+        console.log('websocket链接路径'+websocket);
         // 打开时
         websocket.onopen = function(evnt) {
-            console.log("  websocket.onopen  ");
+            console.log("  websocket.onopen，链接成功  ");
+            console.log(evnt);
         };
 
 
@@ -25,7 +29,7 @@ layui.use(['index'],function() {
 
 
         websocket.onerror = function(evnt) {
-            console.log("  websocket.onerror  ");
+            console.log("  websocket.onerror  "+JSON.stringify(evnt));
         };
 
         websocket.onclose = function(evnt) {

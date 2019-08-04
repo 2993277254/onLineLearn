@@ -48,17 +48,15 @@ public class mainController extends BaseController {
             pageUrl= java.net.URLDecoder.decode(route , "utf-8");   //解码
         }catch (UnsupportedEncodingException e){
             e.printStackTrace();
-        }
-       ;
-
+        };
         session.setAttribute("uploadHttpPath", PropertiesUtil.getValue("uploadHttpPath"));
 //        String ip= ServletUtils.getIpAddr();
 //        String uploadHttpPath="http://"+ip+":8020/uploadfile";
 //        session.setAttribute("uploadHttpPath", uploadHttpPath);
-
         ModelAndView modelAndView=new ModelAndView();
         modelAndView.setViewName(pageUrl);
         return modelAndView;
+
     }
 
     //三级目录

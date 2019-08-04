@@ -1,12 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
-	xmlns:task="http://www.springframework.org/schema/task" 
+	xmlns:task="http://www.springframework.org/schema/task"
 	xmlns:context="http://www.springframework.org/schema/context"
 	xmlns:mvc="http://www.springframework.org/schema/mvc"
-	   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xmlns:p="http://www.springframework.org/schema/p"
     xmlns:aop="http://www.springframework.org/schema/aop"
-	xsi:schemaLocation="http://www.springframework.org/schema/beans 
+	xsi:schemaLocation="
+	http://www.springframework.org/schema/beans
 	http://www.springframework.org/schema/beans/spring-beans.xsd 
 	http://www.springframework.org/schema/mvc
 	http://www.springframework.org/schema/mvc/spring-mvc.xsd
@@ -39,9 +40,7 @@
 		<context:include-filter type="annotation" expression="org.springframework.stereotype.Controller" />
 		<!-- 强制排除service -->
 		<context:exclude-filter type="annotation" expression="org.springframework.stereotype.Service"/>
-	</context:component-scan> 
-	
-
+	</context:component-scan>
 	<!-- 定义视图文件解析 -->
 	<bean
 		class="org.springframework.web.servlet.view.InternalResourceViewResolver">
@@ -113,11 +112,10 @@
             <bean class="com.lsfly.util.Interceptors" />
         </mvc:interceptor>  
     </mvc:interceptors>
-    
     <!-- 定时任务 -->
-	<task:executor id="executor" pool-size="5" />  
-	<task:scheduler id="scheduler" pool-size="10" />  <!-- 连接池 -->
-	<task:annotation-driven executor="executor" scheduler="scheduler" />
+<!--	<task:executor id="executor" pool-size="5" />  -->
+<!--	<task:scheduler id="scheduler" pool-size="10" />  &lt;!&ndash; 连接池 &ndash;&gt;-->
+<!--	<task:annotation-driven executor="executor" scheduler="scheduler" />-->
 	<!-- 配置文件实现 如果使用配置文件实现 把注释解开即可然后 删除掉代码的注解，时间有cron、fixed-rate、fixed-delay等设置-->
 	<!-- cron配置请参考http://cron.qqe2.com/-->
 	  <!--<task:scheduled-tasks scheduler="scheduler">-->

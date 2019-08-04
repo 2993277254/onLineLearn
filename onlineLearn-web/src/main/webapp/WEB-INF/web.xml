@@ -4,6 +4,8 @@
          xsi:schemaLocation="http://java.sun.com/xml/ns/javaee
          http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd"
          version="3.0">
+    <!-- WebSocket 需要Servlet3.0 需要web.xml 3.0及以上，并要配置此 -->
+    <absolute-ordering />
   <context-param>
     <param-name>contextConfigLocation</param-name>
     <param-value>classpath:spring-context*.xml</param-value>
@@ -32,6 +34,7 @@
       <param-name>forceEncoding</param-name>
       <param-value>true</param-value>
     </init-param>
+
   </filter>
   <filter-mapping>
     <filter-name>SpringEncodingFilter</filter-name>
@@ -59,6 +62,7 @@
       <param-name>contextConfigLocation</param-name>
       <param-value>classpath:spring-mvc.xml</param-value>
     </init-param>
+      <async-supported>true</async-supported>
   </servlet>
    <!--DWR 消息推送-->
   <!--<servlet>-->
@@ -103,8 +107,7 @@
     <servlet-name>SpringMVC</servlet-name>
     <url-pattern>/</url-pattern>
   </servlet-mapping>
-  <!-- WebSocket 需要Servlet3.0 需要web.xml 3.0及以上，并要配置此 -->
-  <absolute-ordering />
+
   <!--配置相关后缀-->
   <servlet-mapping>
     <servlet-name>default</servlet-name>

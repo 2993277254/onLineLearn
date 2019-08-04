@@ -19,7 +19,7 @@ public class MyWebSocketHandler implements WebSocketHandler {
     // 连接 就绪时
     @Override
     public void afterConnectionEstablished(WebSocketSession webSocketSession) throws Exception {
-        logger.info("connect websocket success.......");
+        logger.info("connect websocket success......."+webSocketSession);
         users.add(webSocketSession);
     }
     // 处理信息
