@@ -1,9 +1,12 @@
+
+
+var websocket=null;
 layui.use(['index'],function() {
     avalon.ready(function () {
-        var websocket;
+
         var path=getRootPath().replace('http://','');
         var pullPath="ws://"+path+"websocket.action";
-        debugger;
+        // debugger;
         // 首先判断是否 支持 WebSocket
         if('WebSocket' in window) {
             websocket = new WebSocket(pullPath);
@@ -16,48 +19,41 @@ layui.use(['index'],function() {
         console.log('websocket链接路径'+websocket);
         // 打开时
         websocket.onopen = function(evnt) {
-            console.log("  websocket.onopen，链接成功  ");
+            console.log("  websocket.onopen，连接成功  ");
             console.log(evnt);
         };
 
 
         // 处理消息时
         websocket.onmessage = function(evnt) {
-            $("#msg").append("<p>(<font color='red'>" + evnt.data + "</font>)</p>");
-            console.log("  websocket.onmessage   ");
+            console.log('处理消息');
             console.log(evnt);
+            alert(evnt.data);
         };
-
-
         websocket.onerror = function(evnt) {
             console.log("  websocket.onerror  "+JSON.stringify(evnt));
+           alert('连接出错');
         };
-
         websocket.onclose = function(evnt) {
             console.log("  websocket.onclose  ");
         };
-
-
-        // 点击了发送消息按钮的响应事件
-        $("#TXBTN").click(function(){
-
-            // 获取消息内容
-            var text = $("#tx").val();
-
-            // 判断
-            if(text == null || text == ""){
-                alert(" content  can not empty!!");
-                return false;
-            }
-
-            var msg = {
-                msgContent: text,
-                postsId: 1
-            };
-
-            // 发送消息
-            websocket.send(JSON.stringify(msg));
-
-        });
     });
 });
+
+function doSendUsers() {
+    debugger;
+    if (isNotEmpty(getUserId())) {
+        if (websocket.readyState == websocket.OPEN) {
+            var msg = {
+                //userId:getUserId(),
+                content: $("#inputMsg").val()
+            };
+            websocket.send(JSON.stringify(msg));//调用后台handleTextMessage方法
+            alert("发送成功!");
+        } else {
+            alert("发送失败!");
+        }
+    }else {
+        alert("连接失败!");
+    }
+}

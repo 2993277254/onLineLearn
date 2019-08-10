@@ -20,16 +20,12 @@
 <body>
 <div class="layui-fluid layui-container layui-card">
     <!-- 最外边框 -->
-    <div style="margin: 20px auto; border: 1px solid blue; width: 300px; height: 500px;">
 
-        <!-- 消息展示框 -->
-        <div id="msg" style="width: 100%; height: 70%; border: 1px solid yellow;overflow: auto;"></div>
+    请输入：<textarea rows="5" cols="10" id="inputMsg" name="inputMsg"></textarea>
+<%--    <button οnclick="doSendUser();">发送</button>--%>
+    <button onclick="doSendUsers()">群发</button>
 
-        <!-- 消息编辑框 -->
-        <textarea id="tx" style="width: 100%; height: 20%;"></textarea>
 
-        <!-- 消息发送按钮 -->
-        <button id="TXBTN" style="width: 100%; height: 8%;">发送数据</button>
 
     </div>
 </div>

@@ -1,11 +1,13 @@
 package com.lsfly.websocket;
 
 import com.lsfly.controller.courseUser.TCourseUserController;
+import com.lsfly.util.CommUtil;
 import com.lsfly.util.ToolUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.server.ServerHttpRequest;
 import org.springframework.http.server.ServerHttpResponse;
+import org.springframework.http.server.ServletServerHttpRequest;
 import org.springframework.web.socket.WebSocketHandler;
 import org.springframework.web.socket.server.support.HttpSessionHandshakeInterceptor;
 
@@ -29,7 +31,20 @@ public class MyHandshakeInterceptor extends HttpSessionHandshakeInterceptor {
                                    Map<String, Object> attributes) throws Exception {
 
         System.out.println("++++++++++++++++ HandshakeInterceptor: beforeHandshake  ++++++++++++++"+attributes);
-        return super.beforeHandshake(request, response, wsHandler, attributes);
+        logger.info("握手前判断用户登录");
+//        握手之前将登陆用户信息从session设置到WebSocketSession
+        if (request instanceof ServletServerHttpRequest){
+            String userId=ToolUtil.getCurrentUserId();
+            if (ToolUtil.isNotEmpty(userId)){
+//                使用userId区分WebSocketHandler，以便定向发送消息
+                attributes.put("WEBSOCKET_USERID",userId);
+                return true;
+            }else {
+                logger.info("握手前判断用户未登录");
+                return false;
+            }
+        }
+        return true;
     }
 
 
@@ -39,12 +54,7 @@ public class MyHandshakeInterceptor extends HttpSessionHandshakeInterceptor {
     public void afterHandshake(ServerHttpRequest request,
                                ServerHttpResponse response, WebSocketHandler wsHandler,
                                Exception ex) {
-
-
-        System.out.println("++++++++++++++++ HandshakeInterceptor: afterHandshake  ++++++++++++++");
-
-
+        logger.info("握手之后");
         super.afterHandshake(request, response, wsHandler, ex);
     }
-
 }

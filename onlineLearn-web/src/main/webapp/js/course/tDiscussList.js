@@ -24,16 +24,35 @@ layui.use(['index','layedit'], function() {
             ,"userId":"user"//表示在controller设置该字段为登录用户id
         });
         getDiscussList();
-        // var layedit = layui.layedit;
-        // layedit.build('addDiscuss',{
-        //     'height':'150px'
-        // }); //建立编辑器
+        var layedit = layui.layedit,index;
+        layedit.set({
+            uploadImage: {
+                url: getRootPath()+'system/uploadFile.do' //接口url
+                ,type: 'post' //默认post
+            }
+        });
+        index=layedit.build('addDiscuss',{
+            'height':'150px'
+        }); //建立编辑器
         form.on('submit(tDiscussEdit_submit)', function(data){
             //debugger;
             //通过表单验证后
-            var field = data.field; //获取提交的字段
+            var content={
+                "content":layedit.getContent(index)
+            }
+            var field = $.extend(data.field,content); //获取提交的字段
+            if (isEmpty(layedit.getContent(index))){
+
+                layer.tips('请填写内容',$("#addDiscuss").next().children(),{
+                    tips:[3,'red']
+                })
+                return false;
+            }
+            // layedit.sync(index);//用于同步编辑器内容到textarea
+            // console.log(field);
             verify_form(field);
         });
+
         avalon.scan();
     });
 });

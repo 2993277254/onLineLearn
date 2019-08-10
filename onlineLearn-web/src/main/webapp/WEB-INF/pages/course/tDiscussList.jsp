@@ -51,7 +51,7 @@
                 </div>
                 <div class="layui-form-item ">
                     <div class="layui-input-block">
-                        <textarea id="addDiscuss" lay-verType="tips"  name="content"  lay-verify="required" placeholder="请输入内容"  class="layui-textarea"></textarea>
+                        <textarea id="addDiscuss"   name="content"   placeholder="请输入内容"  class="layui-textarea"></textarea>
                     </div>
                 </div>
                 <div class="layui-form-item">
@@ -116,7 +116,7 @@
                 </div>
                 <br>
                 <br>
-                <div class="layui-row" >
+                <div class="layui-row ">
                     {{item.content}}
                 </div>
             </div>
