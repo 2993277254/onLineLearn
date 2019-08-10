@@ -22,7 +22,10 @@
                      >
                     <a href="javascript:;">所有课程</a>
                     <dl class="layui-nav-child" >
-                        <dd ms-for="($index, el) in @typeData"><span  style="padding: 10px 0px 10px 0px; " class="courseType layui-col-md12 acursor"   :click="typeClick(el.value)" >{{el.name}}</span>
+                        <dd ms-for="($index, el) in @typeData">
+                            <span  style="padding: 10px 0px 10px 0px; " class="courseType layui-col-md12 acursor"   :click="typeClick(el.value)" >
+                                {{el.name}}
+                            </span>
                         </dd>
                     </dl>
                     <%--<span :if="@baseFuncInfo.getSysDictByCode('course_type_').length>3" style="padding: 10px 0px 10px 0px; " class="courseType layui-col-md12 acursor"   :click="" >更多</span>--%>

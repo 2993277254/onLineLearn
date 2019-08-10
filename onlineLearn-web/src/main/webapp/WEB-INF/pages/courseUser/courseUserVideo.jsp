@@ -14,6 +14,12 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
     <title>课程学习</title>
+    <style>
+        .layui-nav-tree{
+            width: 100%;
+            /*background: white;*/
+        }
+    </style>
 </head>
 <body ms-controller="tCourseUserVideo">
 <div class="layui-fluid top20">
@@ -61,19 +67,57 @@
                         <img ms-attr="{'src':@photoUrl}" style="width: 100%;height: 100%">
                     </div>
                 </div>
-                <div class="layui-row">
-                    <div class="layui-row layui-fluid" style="text-align: left;font-weight: bolder;font-size: 16px;">
-                        目录
+                <div class="layui-row ">
+                    <div class="layui-row layui-fluid" style="text-align: left;font-weight: bolder;font-size: 18px;">
+                        课程目录
                     </div>
                     <br>
-                    <ul class="layui-row layui-card layui-timeline" id="courseVideoList" style="overflow: auto">
+<%--                    <ul class="layui-row layui-card layui-timeline" id="courseVideoList" style="overflow: auto">--%>
 
-                        <li if="@outlineList.length>0" class="layui-timeline-item" ms-for="($index, item) in @outlineList">
-                            <i class="layui-icon layui-timeline-axis">&#xe63f;</i>
-                            <div class="layui-timeline-content layui-text">
-                                <h3 class="layui-timeline-title">{{item.name}}:{{item.text}}</h3>
-                                <br>
-                                <div :if="@item.courseHouse.length>0" class="layui-row" ms-for="($index2, item2) in @item.courseHouse">
+<%--                        <li if="@outlineList.length>0" class="layui-timeline-item" ms-for="($index, item) in @outlineList">--%>
+<%--                            <i class="layui-icon layui-timeline-axis">&#xe63f;</i>--%>
+<%--                            <div class="layui-timeline-content layui-text">--%>
+<%--                                <h3 class="layui-timeline-title">{{item.name}}:{{item.text}}</h3>--%>
+<%--                                <br>--%>
+<%--                                <div :if="@item.courseHouse.length>0" class="layui-row" ms-for="($index2, item2) in @item.courseHouse">--%>
+<%--                                    <i :if="item2.video.progress==100"--%>
+<%--                                       class="layui-col-md1 layui-icon layui-icon-ok-circle"--%>
+<%--                                       style="color: green;height: 40px;line-height: 40px;font-size: 25px"></i>--%>
+<%--                                    <i :if="item2.video.progress==0"--%>
+<%--                                       class="layui-col-md1 layui-icon layui-icon-add-circle "--%>
+<%--                                       style="color: red;height: 40px;line-height: 40px;font-size: 25px"></i>--%>
+<%--                                    <i :if="item2.video.progress>0&&item2.video.progress<100"--%>
+<%--                                       class="layui-col-md1 layui-icon layui-icon-loading "--%>
+<%--                                       style="color: orange;height: 40px;line-height: 40px;font-size: 25px"></i>--%>
+<%--                                    <div class="layui-col-md11">--%>
+<%--                            <span style="height: 40px;line-height: 40px;"--%>
+<%--                                  class="layui-col-md12 layui-col-sm12 layui-fluid  acursor videospan"--%>
+<%--                                  :click="studyPlay($index,$index2)">{{item2.name}}:{{item2.text}}</span>--%>
+<%--                                        <div class="layui-col-md12 layui-col-sm12 layui-fluid layui-progress"--%>
+<%--                                             ms-attr="{'lay-filter':'videoProgress_'+$index+'_'+$index2,'progress':item2.video.progress}"--%>
+<%--                                             style="margin-bottom: 10px;margin-top: 1px;">--%>
+<%--                                            <div :if="item2.video.progress==100" class="layui-progress-bar layui-bg-green"--%>
+<%--                                                 ms-attr="{'lay-percent':item2.video.progress+'%'}" ></div>--%>
+<%--                                            <div :if="item2.video.progress==0" class="layui-progress-bar layui-bg-red"--%>
+<%--                                                 ms-attr="{'lay-percent':item2.video.progress+'%'}"></div>--%>
+<%--                                            <div :if="item2.video.progress>0&&item2.video.progress<100" class="layui-progress-bar layui-bg-orange"--%>
+<%--                                                 ms-attr="{'lay-percent':item2.video.progress+'%'}"></div>--%>
+<%--                                        </div>--%>
+<%--                                    </div>--%>
+<%--                                    <br>--%>
+<%--                                </div>--%>
+<%--                            </div>--%>
+<%--                        </li>--%>
+<%--                        <li :if="@outlineList.length==0" class="layui-timeline-item">--%>
+<%--                            暂无课时--%>
+<%--                        </li>--%>
+<%--                    </ul>--%>
+
+                    <ul class="layui-row   layui-card layui-nav layui-nav-tree layui-bg-white layui-inline" id="courseVideoList" style="overflow: auto">
+                        <li class="layui-row  layui-nav-item layui-nav-itemed" ms-for="($index, item) in @outlineList">
+                            <a class="layui-row" href="javascript:;">{{item.name}}:{{item.text}}</a>
+                            <dl  class="layui-row  layui-nav-child">
+                                <dd :if="@item.courseHouse.length>0" class="layui-row layui-fluid" ms-for="($index2, item2) in @item.courseHouse">
                                     <i :if="item2.video.progress==100"
                                        class="layui-col-md1 layui-icon layui-icon-ok-circle"
                                        style="color: green;height: 40px;line-height: 40px;font-size: 25px"></i>
@@ -98,11 +142,10 @@
                                                  ms-attr="{'lay-percent':item2.video.progress+'%'}"></div>
                                         </div>
                                     </div>
-                                    <br>
-                                </div>
-                            </div>
+                                </dd>
+                            </dl>
                         </li>
-                        <li :if="@outlineList.length==0" class="layui-timeline-item">
+                        <li :if="@outlineList.length==0" class="layui-row layui-nav-item">
                             暂无课时
                         </li>
                     </ul>
