@@ -4,7 +4,7 @@ var login = avalon.define({
     baseFuncInfo: baseFuncInfo//底层基本方法
 
 });
-layui.use(['index','element','flow'],function() {
+layui.use(['index'],function() {
 
     avalon.ready(function () {
 

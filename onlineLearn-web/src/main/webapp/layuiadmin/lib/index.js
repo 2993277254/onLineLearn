@@ -11,14 +11,15 @@ layui.extend({
   setter: 'config' //配置模块
   ,admin: 'lib/admin' //核心模块
   ,view: 'lib/view' //视图渲染模块
-}).define(['setter', 'admin','table','form','laydate','laytpl','upload'], function(exports){
+}).define(['setter', 'admin','table','form','laydate','laytpl','util','flow'], function(exports){
   //add by huoquan 增加table、form、laydate模块加载
   var setter = layui.setter
   ,element = layui.element
   ,admin = layui.admin
   ,tabsPage = admin.tabsPage
   ,view = layui.view
-  
+  ,util=layui.util
+      ,flow=layui.flow
   //打开标签页
   ,openTabsPage = function(url, text){
     //遍历页签选项卡
@@ -68,8 +69,22 @@ layui.extend({
   
   ,APP_BODY = '#LAY_app_body', FILTER_TAB_TBAS = 'layadmin-layout-tabs'
   ,$ = layui.$, $win = $(window);
-  
-  //初始
+
+  util.fixbar({
+    top:true
+    // ,bottom:true
+    , css: { right: 15, bottom: 35 }
+    , bgcolor: '#d2d2d2 !important;display:block;'
+    ,showHeight:100
+    , click: function (type) {
+      if (type === 'top') {
+        $('.layui-body').animate({//主要代码
+          scrollTop: 0
+        }, 200);
+      }
+    }
+  });
+ //初始
   if(admin.screen() < 2) admin.sideFlexible();
   
   //将模块根路径设置为 controller 目录

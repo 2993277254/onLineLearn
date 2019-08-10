@@ -16,19 +16,24 @@
 <div class="layui-container " style="padding-bottom: 20px;">
    <div class="layui-fluid">
        <div class="layui-row">
-           <div class="layui-col-md3 " style="max-height: 280px;overflow: auto">
-                <div class="layui-row layui-bg-black" style="text-align: center;padding: 10px 0px 10px 0px;color: white; "
-                     ms-for="($index, el) in @typeData">
-                    <span  style="padding: 10px 0px 10px 0px; " class="courseType layui-col-md12 acursor"   :click="typeClick(el.value)" >{{el.name}}</span>
-                    <%--<span :if="@baseFuncInfo.getSysDictByCode('course_type_').length>3" style="padding: 10px 0px 10px 0px; " class="courseType layui-col-md12 acursor"   :click="" >更多</span>--%>
-                </div>
 
-           </div>
+           <ul class="layui-col-md3 layui-nav layui-nav-tree" style="min-width:260px;max-height: 300px;overflow: auto;">
+                <li class="layui-row layui-bg-black layui-nav-item layui-nav-itemed" style="text-align: center;padding: 10px 0px 10px 0px;color: white; "
+                     >
+                    <a href="javascript:;">所有课程</a>
+                    <dl class="layui-nav-child" >
+                        <dd ms-for="($index, el) in @typeData"><span  style="padding: 10px 0px 10px 0px; " class="courseType layui-col-md12 acursor"   :click="typeClick(el.value)" >{{el.name}}</span>
+                        </dd>
+                    </dl>
+                    <%--<span :if="@baseFuncInfo.getSysDictByCode('course_type_').length>3" style="padding: 10px 0px 10px 0px; " class="courseType layui-col-md12 acursor"   :click="" >更多</span>--%>
+                </li>
+
+           </ul>
            <div class="layui-col-md9" >
                <div class="layui-carousel" id="carouselWheel" lay-filter="carouselWheel" >
                    <div carousel-item>
                        <div ms-for="($index, el) in @hotList">
-                           <img  ms-attr="{src: @imgfix+@el.photoUrl}" style="width: 100%;height: 100%" :click="imgClick(el.uid)" class="layui-row acursor">
+                           <img  ms-attr="{src: @imgfix+@el.photoUrl}" style="width: 100%;height: 100%" :click="imgClick(el.uid)" class="layui-row acursor " alt="" >
                            <div class="layui-row layui-fluid acursor" :click="imgClick(el.uid)" style="text-align: center;position: absolute;top: 0px;font-size: 20px;font-weight: bolder">{{el.name}}</div>
                        </div>
                    </div>

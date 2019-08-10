@@ -25,6 +25,7 @@ layui.use(['index'],function() {
         websocket.onmessage = function(evnt) {
             $("#msg").append("<p>(<font color='red'>" + evnt.data + "</font>)</p>");
             console.log("  websocket.onmessage   ");
+            console.log(evnt);
         };
 
 

@@ -65,6 +65,8 @@
 				<!--要求验证后才能动态操作-->
      			 /*/**.do = authc
      			 /**.do = authc
+<!--				/websocket.action=authc-->
+<!--				/sockjs/websocket.action=authc-->
 				<!--/admin/**=authc-->
 				<!--/courseUser/**=authc-->
 	        </value>  

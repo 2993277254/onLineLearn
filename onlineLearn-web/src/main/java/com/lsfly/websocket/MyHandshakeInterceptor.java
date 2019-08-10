@@ -1,6 +1,7 @@
 package com.lsfly.websocket;
 
 import com.lsfly.controller.courseUser.TCourseUserController;
+import com.lsfly.util.ToolUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.server.ServerHttpRequest;
@@ -28,7 +29,6 @@ public class MyHandshakeInterceptor extends HttpSessionHandshakeInterceptor {
                                    Map<String, Object> attributes) throws Exception {
 
         System.out.println("++++++++++++++++ HandshakeInterceptor: beforeHandshake  ++++++++++++++"+attributes);
-
         return super.beforeHandshake(request, response, wsHandler, attributes);
     }
 

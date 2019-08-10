@@ -61,6 +61,8 @@ function loadHot() {
             frontIndex.hotList.pushArray(data.list);
             //var str='<div></div>';
             loadWheel();
+
+
         }
     });
 

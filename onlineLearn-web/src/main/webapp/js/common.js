@@ -532,3 +532,8 @@ function seeSeason(text,name) {
         content:str
     });
 }
+//懒加载
+function lazyImg() {
+    var flow=layui.flow;
+    flow.lazyimg();
+}
