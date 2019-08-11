@@ -30,7 +30,6 @@ public class MyHandshakeInterceptor extends HttpSessionHandshakeInterceptor {
                                    ServerHttpResponse response, WebSocketHandler wsHandler,
                                    Map<String, Object> attributes) throws Exception {
 
-        System.out.println("++++++++++++++++ HandshakeInterceptor: beforeHandshake  ++++++++++++++"+attributes);
         logger.info("握手前判断用户登录");
 //        握手之前将登陆用户信息从session设置到WebSocketSession
         if (request instanceof ServletServerHttpRequest){

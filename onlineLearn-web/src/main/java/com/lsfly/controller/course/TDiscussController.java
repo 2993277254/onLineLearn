@@ -67,6 +67,14 @@ public class TDiscussController extends BaseController{
         result.setBizData(pageInfo);
         return result;
     }
+    @RequestMapping(value = "/list2.do", method = RequestMethod.POST)
+    @ResponseBody
+    public Result list2(HttpServletRequest request,  TDiscussList tDiscussList){
+        Result result = new Result();
+        PageInfo pageInfo=iTDiscussService.list(tDiscussList);
+        result.setBizData(pageInfo);
+        return result;
+    }
 
     /**
      * 获取实体信息
@@ -106,6 +114,22 @@ public class TDiscussController extends BaseController{
         result.setBizData(code);
         return result;
     }
+
+    @RequestMapping(value = "/saveOrEdit2.do", method = RequestMethod.POST)
+    @ResponseBody
+    public Result saveOrEdit2(HttpServletRequest request,  TDiscussEdit tDiscussEdit){
+        Result result = new Result();
+        if (ToolUtil.isNotEmpty(tDiscussEdit.getUserId())&&tDiscussEdit.getUserId().equals("user")){
+            tDiscussEdit.setUserId(getCurrentUserId());
+        }
+        if(tDiscussEdit==null){
+            throw new InvalidParamException(MessageHelper.MODEL_ISNULL);  //抛出异常
+        }
+        TDiscussEdit code=iTDiscussService.saveOrEdit2(tDiscussEdit);
+        result.setBizData(code);
+        return result;
+    }
+
 
     /**
      * 删除实体信息

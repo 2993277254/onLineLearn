@@ -103,7 +103,7 @@ public class TDiscussServiceImpl extends AbstractBaseServiceImpl implements ITDi
         }*/
         mapper.insert(model);
     }
-    
+
 
     /**
      * 分页查询列表方法
@@ -161,6 +161,27 @@ public class TDiscussServiceImpl extends AbstractBaseServiceImpl implements ITDi
             n = mapper.updateByPrimaryKeySelective(tDiscussEdit);
         }
         return n;
+    }
+
+    @Override
+    @Transactional
+    public TDiscussEdit saveOrEdit2(TDiscussEdit tDiscussEdit) {
+        tDiscussEdit.setTimestamp(ToolUtil.getTimeMillis());
+        if(ToolUtil.isEmpty(tDiscussEdit.getUid())){
+            //id为空，新增操作
+            tDiscussEdit.setUid(ToolUtil.getUUID());
+            tDiscussEdit.setCreateTime(new Date());
+            tDiscussEdit.setCreateBy(ToolUtil.getCurrentUserId());
+            tDiscussEdit.setIsDelete("0");
+
+            mapper.insertSelective(tDiscussEdit);
+        }else{
+            //id不为空，编辑操作
+            tDiscussEdit.setUpdateTime(new Date());
+            tDiscussEdit.setUpdateBy(ToolUtil.getCurrentUserId());
+            mapper.updateByPrimaryKeySelective(tDiscussEdit);
+        }
+        return tDiscussEdit;
     }
 
     /**

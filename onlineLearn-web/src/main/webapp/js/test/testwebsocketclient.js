@@ -28,11 +28,14 @@ layui.use(['index'],function() {
         websocket.onmessage = function(evnt) {
             console.log('处理消息');
             console.log(evnt);
-            alert(evnt.data);
+            var data=JSON.parse(evnt.data);
+            console.log(data.content);
         };
         websocket.onerror = function(evnt) {
-            console.log("  websocket.onerror  "+JSON.stringify(evnt));
+            debugger;
+            console.log(JSON.stringify(evnt));
            alert('连接出错');
+           // websocket.onclose();
         };
         websocket.onclose = function(evnt) {
             console.log("  websocket.onclose  ");

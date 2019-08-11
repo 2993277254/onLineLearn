@@ -1,6 +1,7 @@
 /**
  * tDiscussList.jsp的js文件，包括列表查询、排序、增加、修改、删除基础操作
  */
+var websocket=null,layedit=null,index;
 var tDiscussList = avalon.define({
     $id: "tDiscussList",
     baseFuncInfo: baseFuncInfo//底层基本方法
@@ -24,7 +25,7 @@ layui.use(['index','layedit'], function() {
             ,"userId":"user"//表示在controller设置该字段为登录用户id
         });
         getDiscussList();
-        var layedit = layui.layedit,index;
+        layedit = layui.layedit;
         layedit.set({
             uploadImage: {
                 url: getRootPath()+'system/uploadFile.do' //接口url
@@ -52,7 +53,8 @@ layui.use(['index','layedit'], function() {
             // console.log(field);
             verify_form(field);
         });
-
+        console.log('开始连接websoket------------');
+        getWsConnection();
         avalon.scan();
     });
 });
@@ -67,7 +69,7 @@ function getDiscussList(pageNum,pageSize) {
     };
     _ajax({
         type: "POST",
-        url: getRootPath() + "tDiscuss/list.do",
+        url: getRootPath() + "tDiscuss/list2.do",
         data: param,  //必须字符串后台才能接收list,
         loading:false,  //是否ajax启用等待旋转框，默认是true
         dataType: "json",
@@ -105,7 +107,7 @@ function verify_form(field){
     _ajax({
         type: "POST",
         //loading:true,  //是否ajax启用等待旋转框，默认是true
-        url: getRootPath()+"tDiscuss/saveOrEdit.do",
+        url: getRootPath()+"tDiscuss/saveOrEdit2.do",
         data:param,
         dataType: "json",
         done:function(data){
@@ -113,9 +115,64 @@ function verify_form(field){
             form.val('tDiscussEdit_form',{
                 "content":""
             });
+            layedit.setContent(index,"");
             successToast("发表成功",1000);
-            getDiscussList();
-
+            getDiscussList();//刷新列表
+            doSendUsers();
         }
     });
+}
+
+//websocket
+
+function getWsConnection() {
+    var path=getRootPath().replace('http://','');
+    var pullPath="ws://"+path+"websocket.action";
+    // debugger;
+    // 首先判断是否 支持 WebSocket
+    if('WebSocket' in window) {
+        websocket = new WebSocket(pullPath);
+
+    } else if('MozWebSocket' in window) {
+        websocket = new MozWebSocket(pullPath);
+    } else {
+        websocket = new SockJS(getRootPath()+"sockjs/websocket.action");
+    }
+    console.log('websocket链接路径'+websocket);
+    // 打开时
+    websocket.onopen = function(evnt) {
+        console.log("  websocket.onopen，连接成功  ");
+        // console.log(evnt);
+    };
+    // 处理消息时
+    websocket.onmessage = function(evnt) {
+        console.log('处理消息');
+        // console.log(evnt);
+        // var data=JSON.parse(evnt.data);
+        // alert(data.content);
+        getDiscussList();//用户接受到新信息就刷新消息列表
+        var i=isEmpty($("#reMsg").text())==true?1:parseInt($("#reMsg").text())+1;
+        $("#reMsg").text(i);
+        $("#reMsg").hasClass("layui-badge")==false?$("#reMsg").addClass("layui-badge"):'';
+    };
+    websocket.onerror = function(evnt) {
+        console.log('连接出错');
+        console.log(JSON.stringify(evnt));
+        // websocket.onclose();
+    };
+    websocket.onclose = function(evnt) {
+        console.log("  websocket.onclose  ");
+    };
+}
+function doSendUsers() {
+        if (websocket.readyState == websocket.OPEN) {
+            var msg = {
+                //userId:getUserId(),
+                content: layedit.getContent(index)
+            };
+            websocket.send(JSON.stringify(msg));//调用后台handleTextMessage方法
+            console.log(getUserId()+"发送"+msg+"成功!");
+        } else {
+            console.log(getUserId()+"发送"+msg+"失败!");
+        }
 }

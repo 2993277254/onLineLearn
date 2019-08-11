@@ -4,6 +4,7 @@ import com.google.common.reflect.TypeToken;
 import com.google.gson.Gson;
 import com.lsfly.exception.InvalidParamException;
 import com.lsfly.exception.RtnCode;
+import com.lsfly.util.ToolUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.socket.*;
@@ -42,15 +43,15 @@ public class MyWebSocketHandler implements WebSocketHandler {
 
         // 将消息JSON格式通过Gson转换成Map
         // message.getPayload().toString() 获取消息具体内容
-        Map<String, Object> msg = gson.fromJson(webSocketMessage.getPayload().toString(),
-                new TypeToken<Map<String, Object>>() {}.getType());
+//        Map<String, Object> msg = gson.fromJson(webSocketMessage.getPayload().toString(),
+//                new TypeToken<Map<String, Object>>() {}.getType());
 
-        logger.info("handleMessage......."+webSocketMessage.getPayload()+"..........."+msg);
+//        logger.info("handleMessage......."+webSocketMessage.getPayload()+"..........."+msg);
 
 //		session.sendMessage(message);
 
         // 处理消息 msgContent消息内容
-        TextMessage textMessage = new TextMessage(msg.toString(), true);
+        TextMessage textMessage = new TextMessage(webSocketMessage.getPayload().toString(), true);
         // 调用方法（发送消息给所有人）
         sendMessageToUsers(textMessage);
     }
@@ -98,19 +99,20 @@ public class MyWebSocketHandler implements WebSocketHandler {
 
     // 给所有在线用户发送 信息
     public void sendMessageToUsers(TextMessage message) {
+
         int i=0;
         for (String userId : users.keySet()) {
             try {
-                if (users.get(userId).isOpen()) {
+                if (users.get(userId).isOpen()) {//自己本身不用推送信息
                     users.get(userId).sendMessage(message);
                     i++;
                 }
             } catch (IOException e) {
-//                e.printStackTrace();
-                throw new InvalidParamException("请先登录",RtnCode.NO_LOIN);
+                e.printStackTrace();
+//                throw new InvalidParamException("请先登录",RtnCode.NO_LOIN);
             }
 
         }
-        logger.info("发送的个数为");
+        logger.info("发送的个数为"+i);
     }
 }

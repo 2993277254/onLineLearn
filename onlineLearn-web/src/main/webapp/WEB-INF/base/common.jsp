@@ -79,9 +79,9 @@
         <ul class="layui-nav " style="float: right">
             <c:choose>
                 <c:when test="${not empty sessionScope.ollSysUser}">
-                    <%--<li class="layui-nav-item">--%>
-                        <%--<a href="">控制台<span class="layui-badge">9</span></a>--%>
-                    <%--</li>--%>
+                    <li class="layui-nav-item">
+                        <a href="">消息<span class="" id="reMsg"></span></a>
+                    </li>
                     <li class="layui-nav-item">
                         <%--<span class="layui-badge-dot"></span>--%>
                         <a href="${baseprefix}/courseUser/courseUserMain">我的课程</a>

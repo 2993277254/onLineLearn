@@ -48,6 +48,8 @@ public interface ITDiscussService{
     //保存实体方法
     int saveOrEdit(TDiscussEdit tDiscussEdit);
 
+    TDiscussEdit saveOrEdit2(TDiscussEdit tDiscussEdit);
+
     //删除方法
     int delete(String[] ids);
 
