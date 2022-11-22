@@ -43,7 +43,7 @@
     "gulp-replace": "^1.0.0",
     "gulp-sourcemaps": "^2.6.0",
     "gulp-uglify": "^3.0.1",
-    "karma": "^3.0.0",
+    "karma": "^6.4.1",
     "karma-browserify": "^5.3.0",
     "karma-browserstack-launcher": "git+https://git@github.com/karma-runner/karma-browserstack-launcher.git#310c22835987b50a908b99d0995fc1655a7e06f5",
     "karma-chrome-launcher": "^2.2.0",
